@@ -28,6 +28,7 @@ model Generation {
   userId       String
   user         User       @relation(fields: [userId], references: [id])
   prompt       String
+  style        GenerationStyle
   imageUrl     String
   createdAt    DateTime   @default(now())
   generationStatus GenerationStatus @default(PENDING)
@@ -37,4 +38,10 @@ enum GenerationStatus {
   PENDING
   SUCCESS
   FAILED
+}
+
+enum GenerationStyle {
+  Editorial 
+  Streetwear
+  Vintage
 }
