@@ -1,0 +1,187 @@
+openapi: 3.0.3
+info:
+  title: AI-Studio API
+  version: 1.0.0
+  description: Backend API for AI-Studio assignment (user auth + image generation)
+
+servers:
+  - url: https://api.ai-studio.om108.work
+    description: prod server
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  userId:
+                    type: string
+
+        '409':
+          description: User already exists
+
+  /auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  userId:
+                    type: string
+        '400':
+          description: Validation error
+        '401':
+          description: Invalid password
+        '404':
+          description: User not found
+
+  /auth/logout:
+    post:
+      summary: Logout user
+      responses:
+        '200':
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /generations:
+    post:
+      summary: Generate an AI image
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - prompt
+                - style
+              properties:
+                prompt:
+                  type: string
+                style:
+                  type: 'Editorial' | 'Streetwear' | 'Vintage'
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Image generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  imageUrl:
+                    type: string
+                  prompt:
+                    type: string
+                  style:
+                    type: string
+                  createdAt:
+                    type: string
+                  status:
+                    type: string
+        '429':
+          description: Model overloaded
+        '401':
+          description: Unauthorized
+
+    get:
+      summary: Get last 5 generations
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 5
+      responses:
+        '200':
+          description: Last 5 generations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    imageUrl:
+                      type: string
+                    prompt:
+                      type: string
+                    style:
+                      type: string
+                    createdAt:
+                      type: string
+                    status:
+                      type: string
+        '401':
+          description: Unauthorized
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
