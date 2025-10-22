@@ -1,15 +1,26 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
+import { Home } from './pages/Home'
+import { Register } from './pages/Register'
+import { Login } from './pages/Login'
+import { Navbar } from './components/Navbar'
+import { Toaster } from 'react-hot-toast'
+import { AuthProvider } from './context/AuthContext'
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <h1 className='text-red-500 text-5xl fond-bold'>Hello World</h1>
-    </>
+    <BrowserRouter>
+      <AuthProvider>
+        <Navbar />
+        <Toaster position="top-right" />
+        <Routes>
+          <Route path='/home' element={ <Home /> } />
+          <Route path='/register' element={ <Register /> } />
+          <Route path='/login' element={ <Login /> } />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
 
