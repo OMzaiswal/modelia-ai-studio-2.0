@@ -22,6 +22,12 @@ Users can sign up, log in, upload images, write prompts, and generate simulated 
 - Jest + Supertest  
 
 ---
+### Pull Requests
+PR-1: `https://github.com/OMzaiswal/modelia-ai-studio-2.0/pull/1`;
+PR-2: `https://github.com/OMzaiswal/modelia-ai-studio-2.0/pull/2`;
+PR-3  `https://github.com/OMzaiswal/modelia-ai-studio-2.0/pull/3`;
+PR-4  `https://github.com/OMzaiswal/modelia-ai-studio-2.0/pull/4`;
+PR-5  `https://github.com/OMzaiswal/modelia-ai-studio-2.0/pull/5`;
 
 ## 📦 Project Structure
 
