@@ -5,9 +5,9 @@ import { z } from "zod";
 import { CustomError } from "../errors/customError";
 
 const registerSchema = z.object({
-    name: z.string('Name is required').min(2, 'Name should be at least 2 characters').max(16, 'Name can not exceed 16 characters'),
-    email: z.string('Email is required').email('Invalid Email').max(15, 'Email can not exceed 15 characters'),
-    password: z.string('Password is required').min(5, 'Password must be at least 5 characters').max(18, 'Password can not exceed 18 characters')
+    name: z.string('Name is required').min(2, 'Name should be at least 2 characters').max(30, 'Name can not exceed 30 characters'),
+    email: z.string('Email is required').email('Invalid Email').max(30, 'Email can not exceed 30 characters'),
+    password: z.string('Password is required').min(5, 'Password must be at least 5 characters').max(30, 'Password can not exceed 30 characters')
     .regex(/[A-Z]/, 'Password must contain at least one uppercase letter.')
     .regex(/[a-z]/, 'Password must contain at least one lowercase letter.')
     .regex(/[0-9]/, 'Password must contain at least one number')
@@ -16,7 +16,7 @@ const registerSchema = z.object({
 
 const loginSchema = z.object({
     email: z.string('Email is required').email('Invalid Email'),
-    password: z.string('Password should be string').min(1, 'Password is required')
+    password: z.string('Password is required').min(1, 'Password is required')
 })
 
 export const registerHandler = async (req: Request, res: Response, next: NextFunction) => {
