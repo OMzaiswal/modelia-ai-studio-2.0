@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 const apiUrl = import.meta.env.VITE_API_URL; 
 
@@ -11,22 +13,28 @@ export const Register = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [response, setResponse] = useState<any>(null);
+    // const [response, setResponse] = useState<any>(null);
+    const { setIsLoggedIn } = useAuth();
+
+    const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError('');
-        setResponse(null);
+        // setResponse(null);
 
         try {
             const res = await axios.post(`${apiUrl}/auth/register`, { name, email, password });
             if(res) {
                 console.log(res.data);
+                toast.success(res.data.message);
+                setIsLoggedIn(true);
+                navigate('/home')
             }
         } catch (err: any) {
             console.log(err.response?.data?.message)
-            setError(err.response?.data?.error[0].message ||  err.message)
+            setError(err.response?.data?.message)
         } finally {
             setLoading(false);
         }
