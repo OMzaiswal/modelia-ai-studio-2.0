@@ -100,6 +100,7 @@ export default function Upload({onUpload}: UploadProps) {
                     onChange={handleImageChange} 
                     className="w-full border-2 border-gray-300 rounded-md p-2"
                     required
+                    data-testid="file-upload-input"
                 />
                 {error && <p>{error}</p>}
             </div>

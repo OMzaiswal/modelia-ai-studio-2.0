@@ -17,9 +17,17 @@ export const Generate = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [response, setresponse] = useState<GeneratedResponse | null>(null);
-    // const [showHistory, setShowHistory] = useState(false);
+    const [abortController, setAbortController] = useState<AbortController | null>(null);
 
     const handleSubmit = async () => {
+      if (loading) {
+        if (abortController) {
+          abortController.abort();
+          setAbortController(null);
+          toast.error("Request Aborted !!")
+        }
+        return;
+      }
       if (!prompt || !style || !img) {
         toast.error('Please enter all the details');
         return;
@@ -27,6 +35,10 @@ export const Generate = () => {
       setError('');
       setLoading(true);
       setresponse(null);
+
+
+      const controller = new AbortController();
+      setAbortController(controller);
     
       const request: GenerateRequest = {
         prompt,
@@ -36,15 +48,21 @@ export const Generate = () => {
   
       try {
         const res = await retryWithBackoff( async () => 
-          await axios.post(`${apiUrl}/generations`,request, { headers: {
-            'Content-Type': 'multipart/form-data',
-        }}), 3, 500);
+          await axios.post(`${apiUrl}/generations`,request, { 
+            headers: {
+              'Content-Type': 'multipart/form-data',
+          }, 
+          signal: controller.signal
+        }), 3, 500);
   
         setresponse(res.data.generation);
         setPrompt('');
         setImg(null)
         
       } catch(err: any) {
+        if(err.name === 'AbortError') {
+          return;
+        }
         if (err.message) {
           setError(err.response.data.message);
         } else {
@@ -60,13 +78,17 @@ export const Generate = () => {
         <div className="flex flex-col max-w-md w-full items-center justify-center bg-gray-100 p-4 rounded-lg shadow-md gap-4">
           <h3 className='my-2'>Generate AI Image</h3>
           <Upload onUpload={setImg} />
-          <PromptInput onchange={setPrompt} value={prompt}/>
+          <PromptInput onChange={setPrompt}/>
           <StyleDropdown value={style} onchange={setStyle}/>
           <button
-            className='border-2 border-gray-300 rounded-lg w-full px-8 py-1 bg-blue-100 text-blue-600 hover:bg-blue-200 '
+            className={`border-2 border-gray-300 rounded-lg w-full px-8 py-1 transition-colors ${
+            loading
+            ? 'bg-red-100 text-red-600 hover:bg-red-200 '
+            : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+            }`}
             onClick={handleSubmit}
           >
-            {loading? 'Generating...' : 'Generate'}
+            {loading? 'Abort' : 'Generate'}
           </button>
           {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
