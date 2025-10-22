@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 import z from "zod";
 import { CustomError } from "../errors/customError";
 import { generateAIResponse } from "../ai-model/aiSimulation";
@@ -16,7 +16,7 @@ const generationSchema = z.object({
       ),
   });
 
-export const postGenerationHandler = async (req: Request, res: Response) => {
+export const postGenerationHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = req.user?.id;
         if (!userId) {
@@ -53,21 +53,12 @@ export const postGenerationHandler = async (req: Request, res: Response) => {
             return;
           }
 
-    } catch (error: any) {
-        if (error instanceof AbortError) {
-            res.status(499).json({ message: "Request aborted" });
-            return;
-        }
-        if (error instanceof CustomError) {
-            res.status(error.statusCode).json({ message: error.message });
-            return;
-        }
-        res.status(500).json({ message: "Internal server error" });
-        return;
+    } catch (err) {
+        next(err);
     }
 }
 
-export const getGenerationHandler = async (req: Request, res: Response) => {
+export const getGenerationHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = req.user?.id;
         if (!userId) {
@@ -83,12 +74,7 @@ export const getGenerationHandler = async (req: Request, res: Response) => {
         res.status(200).json({ generations });
         return;
         
-    } catch (error: any) {
-        if (error instanceof CustomError) {
-            res.status(error.statusCode).json({ message: error.message });
-            return;
-        }
-        res.status(500).json({ message: "Internal server error" });
-        return;
+    } catch (err) {
+        next(err);
     }
 }
