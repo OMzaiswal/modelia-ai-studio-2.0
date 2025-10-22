@@ -14,7 +14,7 @@ describe('StyleDropdown Component', () => {
   it('displays all style options', () => {
     render(<StyleDropdown value="Editorial" onchange={mockOnChange} />)
     
-    const select = screen.getByRole('combobox')
+    // const select = screen.getByRole('combobox')
     
     expect(screen.getByText('Editorial')).toBeInTheDocument()
     expect(screen.getByText('Streetwear')).toBeInTheDocument()
