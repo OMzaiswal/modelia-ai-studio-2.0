@@ -10,7 +10,7 @@ export const Home = () => {
                 onClick={() => {
                     setShowHistory(prev => !prev);
                 }}
-                className="text-lg text-blue-400 p-2 rounded bg-blue-50"
+                className="text-lg text-blue-400 p-2 rounded bg-blue-50 mt-2"
             >
                 {showHistory? 'Generate New Image' : 'Show History'}
             </button>
